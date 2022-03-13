@@ -6,7 +6,7 @@ class APIMethods {
         this.URL = 'http://localhost:3000/todos'
     }
 
-    getAllItems = async () => {
+    getAllItemsFromDB = async () => {
         try {
             const { data } = await axios({method: 'get', url:this.URL})
             return data
@@ -14,24 +14,36 @@ class APIMethods {
             throw error
         }
     }
-
-    createItem = async () => {
+    
+    createItemFromDB = async (item) => {
         try {
-            const allItems = await axios({method: 'get', url:this.URL})
+            await axios({
+                method: 'post',
+                url:this.URL,
+                data: {
+                    title: item
+                }
+            })
         } catch (error) {
             throw error 
         }
     }
 
-    updateItemByID = async (id) => {
+    updateItemByIDFromDB = async (id,newTitle) => {
         try {
-            await axios({method: 'put', url:`${this.URL}/${id}`})
+            await axios({
+                method: 'put',
+                url:`${this.URL}/${id}`,
+                data: {
+                    title: newTitle
+                }
+            })
         } catch (error) {
             throw error 
         }
     }
 
-    deleteItemByID = async (id) => {
+    deleteItemByIDFromDB = async (id) => {
         try {
             await axios({method: 'delete', url:`${this.URL}/${id}`})
         } catch (error) {

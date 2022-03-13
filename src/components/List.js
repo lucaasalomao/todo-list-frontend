@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { v4 as uuid } from 'uuid'
+import React, { useEffect, useState } from 'react';
 import APIMethods from '../apiMethods'
 
 /* duvidas..
@@ -9,49 +8,89 @@ import APIMethods from '../apiMethods'
 ele é uma classe? qual o constructor dele?
 3. purq nao funciona o push no addItemTo list direti? list.push()
 4. Purq tem que ter async em cima de async?
+5. Nao sei se é a melhor forma de fazer o edit
+6. Nao sei se eh pra ter todos esses metodos aqui nessa pagina
 */
 
 
 const List = () => {
 
     /* Input newItem */
-    const [item, setItem] = useState("")
+    const [text, setText] = useState("")
 
-    const getItem = (e) => {
-        setItem(e.target.value)
+    const getText = (e) => {
+        setText(e.target.value)
     }
 
     /* Control List */
-    const [list, setList] = useState(["item","2"])
 
-    const addItemToList = () => {
-        setList([...list,item])
-    }
+    const [list, setList] = useState([])
 
-    const deleteItem = (e) => {
-        console.log("Delete")
-    }
-
-    const testing = async () => {
+    const getItemsFromDB = async () => {
         try {
-            const allItems = await APIMethods.getAllItems()
-            console.log(allItems)  
+            const allItems = await APIMethods.getAllItemsFromDB()
+            setList([...allItems])  
         } catch (error) {
             throw error
         } 
     }
 
-    testing()
+    const addItemToList = async () => {
+        try {
+            await APIMethods.createItemFromDB(text)
+            getItemsFromDB()
+        } catch (error) {
+            throw error
+        } 
+    }
+
+    const deleteItemByID = async (id) => {
+        try {
+            await APIMethods.deleteItemByIDFromDB(id)
+        } catch (error) {
+            throw error
+        } 
+    }
+
+    /* loading page */
+    
+    useEffect(() => {
+        getItemsFromDB()
+    },[])
+
+    /* edit control */
+
+    const [editStatus, setEditStatus] = useState(false)
+
+    const editFunction = () => {
+        setEditStatus(!editStatus)
+    }
+
+    const updateItemByID = async (id,newTitle) => {
+        try {
+            await APIMethods.updateItemByIDFromDB(id,newTitle)
+            getItemsFromDB()
+            setEditStatus(!editStatus)
+        } catch (error) {
+            throw error
+        } 
+    }
 
     return (
 
     <>
-        <input onChange={getItem}></input> <button onClick={addItemToList}> + </button> 
+        <input placeholder="What's new out there..?" onChange={getText}></input> <button onClick={addItemToList}> + </button> 
         
         { list.map( (item) => {
-            const keyId = uuid()
             return (
-                <div key={keyId}> {item} <button onClick={deleteItem}> - </button> </div>
+                <div key={item._id}>
+                    {!editStatus ?
+                        <> <span>{item.title}</span> <button onClick={()=>editFunction()}> Edit </button> </>
+                        : <>  <input defaultValue={item.title} onChange={getText} ></input> <button onClick={()=>updateItemByID(item._id,text)}> ok </button> </> 
+                    }
+                    
+                    <button onClick={()=>deleteItemByID(item._id)}> - </button>             
+                </div>
             )
         })}
     </>
