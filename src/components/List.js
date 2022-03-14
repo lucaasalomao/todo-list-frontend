@@ -91,25 +91,34 @@ const List = () => {
 
     return (
 
-    <>
-        <input placeholder="What's new out there..?" onChange={getText}></input> <button onClick={addItemToList}> + </button> 
-        
-        { list.map( (item) => {
-            return (
-                <div key={item._id}>
-                    {!item.editingStatus ?
-                        <> <span>{item.title}</span> <button onClick={()=>switchEditStatus(item._id,item.title)}> Edit </button> </>
-                        : <>  <input defaultValue={item.title} onChange={getText} ></input> <button onClick={()=>updateItemByID(item._id,text)}> ok </button> </> 
-                    }
+        <>
+            {/* add text field */}
+            <input placeholder="What's new out there..?" onChange={getText}></input>
+            <button onClick={addItemToList}> + </button> 
+            
+            { list.map( (item) => {
+                return (
+                    <div key={item._id}>
+                        
+                        {!item.editingStatus ?
+                            <>  {/* text display mode (editingStatus = false) */}
+                                <span>{item.title}</span>
+                                <button onClick={()=>switchEditStatus(item._id,item.title)}>Edit</button>
+                            </>
+                            : 
+                            <> {/* text editing mode  (editingStatus = true) */}
+                                <input defaultValue={item.title} onChange={getText} ></input>
+                                <button onClick={()=>updateItemByID(item._id,text)}>ok</button>
+                            </> 
+                        }
+                        
+                        <button onClick={()=>deleteItemByID(item._id)}> - </button>             
                     
-                    <button onClick={()=>deleteItemByID(item._id)}> - </button>             
-                </div>
-            )
-        })}
-    </>
-
-  )
-
+                    </div>
+                )
+            })}
+        </>
+    )
 
 }
 
