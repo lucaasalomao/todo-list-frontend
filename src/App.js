@@ -5,7 +5,7 @@ function App() {
     <div>
       
       <div>
-        To do List
+        To Do..
       </div>
 
       <List/>

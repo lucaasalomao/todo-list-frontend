@@ -12,6 +12,11 @@ ele é uma classe? qual o constructor dele?
 6. Nao sei se eh pra ter todos esses metodos aqui nessa pagina
 */
 
+/* Falta fazer
+
+2. Delete não esta atualizando reativamente
+
+*/
 
 const List = () => {
 
@@ -22,18 +27,22 @@ const List = () => {
         setText(e.target.value)
     }
 
-    /* Control List */
-
+    /* loading page */   
     const [list, setList] = useState([])
 
     const getItemsFromDB = async () => {
         try {
-            const allItems = await APIMethods.getAllItemsFromDB()
+            const allItemsFromDB = await APIMethods.getAllItemsFromDB()
+            const allItems = allItemsFromDB.map(obj=> ({ ...obj, editingStatus: false }))
             setList([...allItems])  
         } catch (error) {
             throw error
         } 
     }
+ 
+    useEffect(() => {
+        getItemsFromDB()
+    },[])
 
     const addItemToList = async () => {
         try {
@@ -52,25 +61,29 @@ const List = () => {
         } 
     }
 
-    /* loading page */
-    
-    useEffect(() => {
-        getItemsFromDB()
-    },[])
+    /* edit text */
 
-    /* edit control */
+    const switchEditStatus = (id,text) => {
+        
+        // set text to initial value === previous value
+        setText(text)
 
-    const [editStatus, setEditStatus] = useState(false)
+        // setting status of item to edit mode
+        const itemEditMode = list.map( obj => {
+            if (obj._id === id) {
+                obj.editingStatus = !obj.editingStatus
+            }
+            return obj
+        })
 
-    const editFunction = () => {
-        setEditStatus(!editStatus)
+        setList([...itemEditMode])
     }
 
     const updateItemByID = async (id,newTitle) => {
         try {
             await APIMethods.updateItemByIDFromDB(id,newTitle)
             getItemsFromDB()
-            setEditStatus(!editStatus)
+            switchEditStatus(id)
         } catch (error) {
             throw error
         } 
@@ -84,8 +97,8 @@ const List = () => {
         { list.map( (item) => {
             return (
                 <div key={item._id}>
-                    {!editStatus ?
-                        <> <span>{item.title}</span> <button onClick={()=>editFunction()}> Edit </button> </>
+                    {!item.editingStatus ?
+                        <> <span>{item.title}</span> <button onClick={()=>switchEditStatus(item._id,item.title)}> Edit </button> </>
                         : <>  <input defaultValue={item.title} onChange={getText} ></input> <button onClick={()=>updateItemByID(item._id,text)}> ok </button> </> 
                     }
                     
