@@ -15,13 +15,13 @@ class APIMethods {
         }
     }
     
-    createItemFromDB = async (item) => {
+    createItemFromDB = async (text) => {
         try {
             await axios({
                 method: 'post',
                 url:this.URL,
                 data: {
-                    title: item
+                    title: text
                 }
             })
         } catch (error) {

@@ -1,12 +1,11 @@
 import List from "./components/List"
+import "./Todo.css"
 
 function App() {
   return (
-    <div>
+    <div className="todo-list">
       
-      <div>
-        To Do..
-      </div>
+      <h1>This is what you have..</h1>
 
       <List/>
 
