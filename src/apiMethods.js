@@ -3,7 +3,7 @@ import axios from 'axios'
 class APIMethods {
 
     constructor() {
-        this.URL = 'http://localhost:3000/todos'
+        this.URL = 'https://iron-todo-list-backend.herokuapp.com/todos'
     }
 
     getAllItemsFromDB = async () => {

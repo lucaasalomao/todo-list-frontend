@@ -21,6 +21,7 @@ ele é uma classe? qual o constructor dele? ok
 2. Delete não esta atualizando reativamente
 3. Edit and check button not adequate position
 4. Input is not comming back to empty
+5. Flag de completed
 
 */
 
